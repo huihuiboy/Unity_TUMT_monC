@@ -1,4 +1,4 @@
 sceneSetups:
-- path: "Assets/\u5834\u666F/monC.unity"
+- path: "Assets/\u5834\u666F/lady.unity"
   isLoaded: 1
   isActive: 1
