@@ -11,6 +11,8 @@ public class lady : MonoBehaviour {
     public float speed = 20f;
     [Header("旋轉"), Range(0, 100f)]
     public float turn = 50f;
+    [Header("血量"),Range(100,500)]
+    public int hp = 100;
 
 
     [Header("動畫控制器=參數名稱")]
@@ -20,6 +22,26 @@ public class lady : MonoBehaviour {
     public string parHut = "hurt";
     public string parDie = "die";
 
+    //屬性 可以設定權限 取得get、設定set
+    //修飾詞 類型 名稱 { 取得 設定 }
+    public int MyProperty { get; set; }
+
+
+    public bool isHut
+    {
+        get
+        {
+            return (ani.GetCurrentAnimatorStateInfo(0).IsName("hurt"));
+        }
+    }
+    public bool isAtk
+    {
+        get
+        {
+            return (ani.GetCurrentAnimatorStateInfo(0).IsName("atk"));
+        }
+    }
+
     private void Start()
     {
         ani = gameObject.GetComponent<Animator>();
@@ -28,14 +50,24 @@ public class lady : MonoBehaviour {
 
     private void Update()
     {
-        Walk();
+        if (isAtk || isHut) return; // 傳回空值 = 跳出
         Turn();
         Attack();
+        
+
+        //判斷動畫狀態
+        //print("是否為受傷動畫:" + isHut);
+        //print("是否為受傷動畫:" + isAtk);
+
+    }
+
+    private void FixedUpdate()
+    {
+        if (isAtk || isHut) return;
+        Walk();
         Jump();
     }
-    //
-    //
-    //
+    
     /// <summary>
     /// 前後左右走路
     /// </summary>
@@ -79,6 +111,8 @@ public class lady : MonoBehaviour {
     private void Hurt()
     {
         ani.SetTrigger(parHut);
+        hp -= 50;
+        if (hp <= 0) Die();
     }
     /// <summary>
     /// 死亡
@@ -86,5 +120,17 @@ public class lady : MonoBehaviour {
     private void Die()
     {
         ani.SetBool(parDie,true);
+        //this 此腳本
+        //enable 啟動
+        this.enabled = false;
+        
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "陷阱")
+        {
+            Hurt();
+        }
     }
 }
